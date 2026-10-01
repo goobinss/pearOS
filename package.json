@@ -16,7 +16,7 @@
     "lint": "eslint apps/web packages examples && node scripts/check-boundary.mjs"
   },
   "devDependencies": {
-    "eslint": "9.39.5",
+    "eslint": "10.11.0",
     "eslint-config-next": "16.3.8"
   }
 }
