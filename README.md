@@ -16,7 +16,7 @@ cp apps/web/.env.example apps/web/.env.local
 pnpm dev
 ```
 
-Open http://localhost:3000. The example enables `DEMO_MODE=true`, so the market and treasury examples are simulated and labeled. Wallet balances always require the real public API. To use a locally running Pear Core API, set `DEMO_MODE=false` and `PEAR_PUBLIC_API_URL=http://localhost:3001` in `apps/web/.env.local`. For a hosted API, use its verified HTTPS URL. Do not put credentials in the public app.
+Open http://localhost:3000. The example enables `DEMO_MODE=true`, so the market and treasury examples are simulated and labeled. Wallet balances always require the real public API. To use a locally running Pear Core API, set `DEMO_MODE=false` and `PEAR_PUBLIC_API_URL=http://localhost:3001` in `apps/web/.env.local`. For a hosted API, use its verified HTTPS URL. Live web mode rejects simulated market responses returned by a demo-configured API. Do not put credentials in the public app.
 
 ## Workspace
 

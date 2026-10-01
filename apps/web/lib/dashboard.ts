@@ -30,14 +30,18 @@ function client(config: Config) { return config.apiUrl ? new Pear({ apiUrl: conf
 export async function getDashboard(): Promise<Dashboard> {
   const config = readConfig();
   if (config.demo) return demoDashboard(config);
-  try { return await client(config)?.getDashboard() || unavailableDashboard(config); }
-  catch { return unavailableDashboard(config); }
+  try {
+    const data = await client(config)?.getDashboard();
+    return data && data.mode !== "demo" ? data : unavailableDashboard(config);
+  } catch { return unavailableDashboard(config); }
 }
 export async function getTreasury(): Promise<Treasury> {
   const config = readConfig();
   if (config.demo) return demoTreasury(config);
-  try { return await client(config)?.getTreasury() || unavailableTreasury(); }
-  catch { return unavailableTreasury(); }
+  try {
+    const data = await client(config)?.getTreasury();
+    return data && data.balances.status !== "demo" ? data : unavailableTreasury();
+  } catch { return unavailableTreasury(); }
 }
 export function ratioResponse(data: Dashboard): RatioResponse {
   return {
@@ -56,8 +60,10 @@ export function ratioResponse(data: Dashboard): RatioResponse {
 export async function getActivity(): Promise<Observation<Transfer[]>> {
   const config = readConfig();
   if (config.demo) return { data: [], status: "demo", source: "No simulated market transfers", observedAt: null, fetchedAt: new Date().toISOString() };
-  try { return await client(config)?.getActivity() || unavailable("Public API is not configured"); }
-  catch { return unavailable("Public API is unavailable"); }
+  try {
+    const data = await client(config)?.getActivity();
+    return data && data.status !== "demo" ? data : unavailable("Public API is not configured or returned demo data");
+  } catch { return unavailable("Public API is unavailable"); }
 }
 export async function getHistory(): Promise<Observation<RatioPoint[]>> {
   return (await getDashboard()).history;
