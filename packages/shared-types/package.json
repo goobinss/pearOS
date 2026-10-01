@@ -1,0 +1,8 @@
+{
+  "name": "@pearos/shared-types",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "exports": { ".": { "types": "./src/index.ts", "default": "./src/index.ts" } },
+  "files": ["src"]
+}

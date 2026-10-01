@@ -1,0 +1,25 @@
+{
+  "name": "@pearos/sdk",
+  "version": "0.1.0",
+  "private": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "@pearos/shared-types": "workspace:*"
+  },
+  "scripts": {
+    "test": "node --import tsx --test tests/*.test.ts"
+  },
+  "devDependencies": {
+    "tsx": "4.23.15",
+    "@types/node": "22.19.19"
+  }
+}
