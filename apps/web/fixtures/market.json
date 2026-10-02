@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-10-01T12:00:00.000Z",
+  "project": {
+    "amount": "0.0025",
+    "currency": "USD",
+    "assetLabel": "A2P \u00b7 synthetic token"
+  },
+  "reference": {
+    "amount": "250",
+    "currency": "USD",
+    "assetLabel": "AAPL Stock Token \u00b7 synthetic reference"
+  }
+}

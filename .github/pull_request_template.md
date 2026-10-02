@@ -1,16 +1,15 @@
-## Summary
+## Result
 
-## Linked issue
+Describe the concrete problem and resulting behavior.
 
-## Verification
+## Validation
 
-- [ ] `pnpm lint`
-- [ ] `pnpm typecheck`
-- [ ] `pnpm test`
-- [ ] `pnpm build`
+List commands actually executed and results; identify blocked checks.
 
-## Screenshots (for UI changes)
+## Review
 
-## Security
-
-- [ ] No secrets, private keys, internal URLs, or Pear Core modules are included
+- [ ] Demo is independently runnable; live uses the authenticated backend; no secrets or private source imports
+- [ ] Demo provenance, source timestamps and exact asset/amount identity are preserved
+- [ ] Registry changes have maintainer-reviewed scope, terms and payment evidence
+- [ ] No financial write, signing, deployment or wallet code added
+- [ ] Browser screenshots reviewed when presentation changed

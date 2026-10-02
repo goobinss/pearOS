@@ -1,8 +1,4 @@
 import { Pear } from "@pearos/sdk";
-const pear = new Pear({ apiUrl: "https://api.pear2apple.xyz" });
-const stats = await pear.getStats();
-if (stats.status === "live" && stats.pearsPerApple) {
-  console.log(`1 Apple = ${stats.pearsPerApple} Pears`);
-}
-const activity = await pear.getActivity();
-console.log(activity.status, activity.data?.length ?? 0);
+const pear = new Pear({ apiUrl: "http://localhost:3000" });
+const comparison = await pear.getRatio();
+console.log(comparison.mode, comparison.status, comparison.ratio);

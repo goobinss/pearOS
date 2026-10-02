@@ -1,0 +1,16 @@
+[
+  {
+    "id": "net-receipts-v1",
+    "status": "proposal",
+    "effectiveFrom": "2026-10-01",
+    "approvedAt": null,
+    "legalReviewedAt": null,
+    "allocations": [
+      { "bucket": "contributors", "percent": 35 },
+      { "bucket": "support", "percent": 25 },
+      { "bucket": "operations", "percent": 20 },
+      { "bucket": "ecosystem", "percent": 10 },
+      { "bucket": "reserve", "percent": 10 }
+    ]
+  }
+]

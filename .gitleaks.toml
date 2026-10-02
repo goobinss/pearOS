@@ -1,0 +1,5 @@
+[extend]
+useDefault = true
+[[allowlists]]
+description = "Generated build/dependency/browser-report artifacts; source and history remain scanned"
+paths = ['''(^|/)(node_modules|\.next|test-results|playwright-report|\.git)/''']

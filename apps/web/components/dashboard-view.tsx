@@ -1,614 +1,253 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
-import { RefreshCw, Terminal, Layers, Sprout, Palette } from "lucide-react";
-import type { Dashboard } from "@/lib/dashboard";
-import type { Observation, Transfer } from "@/lib/types";
-import { Button } from "@pearos/ui/button";
-import { readApi } from "./providers";
 import {
-  Metric,
-  SourceNote,
-  AddressLink,
-  TransferTable,
-  Status,
-} from "./data-display";
-import { RatioChart } from "./ratio-chart";
-import { amount, usd, dateTime } from "./format";
-import { useNow } from "./use-now";
-
-function ageSources<T>(value: T, failed: boolean, now: number | null): T {
-  if (Array.isArray(value))
-    return value.map((item) => ageSources(item, failed, now)) as T;
-  if (!value || typeof value !== "object") return value;
-  const row = value as Record<string, unknown>;
-  const result = Object.fromEntries(
-    Object.entries(row).map(([key, entry]) => [key, ageSources(entry, failed, now)]),
-  );
-  if (
-    "observedAt" in row &&
-    row.data &&
-    ["live", "cached"].includes(String(row.status)) &&
-    (failed || now === null ||
-      (typeof row.freshUntil === "string" &&
-        Date.parse(row.freshUntil) < now))
-  )
-    result.status = "stale";
-  return result as T;
-}
-
-export function DashboardView({
-  initial,
-  terminal = false,
+  ArrowRight,
+  ArrowUpRight,
+  Sprout,
+  ScanLine,
+  BookOpen,
+} from "lucide-react";
+import type { RatioResponse, BountyView, TaskProposal } from "@/lib/types";
+import { TaskProposalCard } from "./task-proposal-card";
+import type { PublicConfig } from "@/lib/config";
+import { RatioPanel, SourceNote, EmptyState } from "./data-display";
+import { BountyCard } from "./build-board";
+import { Address } from "./address";
+import { amount } from "./format";
+export function HomeView({
+  ratio,
+  config,
+  bounties,
+  proposals,
 }: {
-  initial: Dashboard;
-  terminal?: boolean;
+  ratio: RatioResponse;
+  config: PublicConfig;
+  bounties: BountyView[];
+  proposals: TaskProposal[];
 }) {
-  const now = useNow();
-  const query = useQuery({
-    queryKey: ["dashboard"],
-    queryFn: () => readApi<Dashboard>("/api/dashboard"),
-    initialData: initial,
-    refetchInterval: 60_000,
-  });
-  const data = ageSources(query.data, query.isError, now);
-  const activity = useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => readApi<Observation<Transfer[]>>("/api/transactions"),
-    enabled: terminal,
-    refetchInterval: 60_000,
-  });
+  return (
+    <>
+      <div className="hero-grid">
+        <section className="hero-copy">
+          <p className="eyebrow">PEAR / {config.symbol} / BUILT TOGETHER</p>
+          <h1>
+            Finally, comparing
+            <br />
+            apples to <span>pears.</span>
+          </h1>
+          <p className="hero-description">
+            A different perspective on community tokens.
+            <br />
+            Clear data. Useful contributions. A treasury you can inspect.
+          </p>
+          <div className="hero-actions">
+            <Link href="/terminal" className="button primary">
+              Explore PearOS <ArrowRight size={18} />
+            </Link>
+            <Link href="/build" className="button secondary">
+              Find a bounty
+            </Link>
+          </div>
+          <div className="mascot-signature">
+            <Image
+              src="/pear-mascot.png"
+              width={112}
+              height={140}
+              alt="PearOS’s smiling pear mascot"
+              priority
+            />
+            <span>
+              A little different.
+              <br />
+              <strong>Open by design.</strong>
+            </span>
+          </div>
+        </section>
+        <RatioPanel ratio={ratio} symbol={config.symbol} />
+      </div>
+      <section className="intro-band">
+        <div>
+          <span className="eyebrow">01 / THE IDEA</span>
+          <h2>
+            Good things grow
+            <br />
+            when people build.
+          </h2>
+        </div>
+        <p>
+          PearOS is the public home of {config.projectName} ({config.symbol}):
+          an independent community software project. Explore the comparison,
+          find a well-defined task, and follow recorded payments. You don’t need
+          to buy or hold a token to contribute.
+        </p>
+        <Link href="/treasury#budget-policy" className="text-link">
+          See the budget proposal <ArrowUpRight size={18} />
+        </Link>
+      </section>
+      <section className="build-preview">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">02 / BUILD PEAR</p>
+            <h2>Small tasks. Meaningful contributions.</h2>
+          </div>
+          <Link href="/build" className="text-link">
+            See the board <ArrowRight size={18} />
+          </Link>
+        </div>
+        {bounties.length || proposals.length ? (
+          <div className="bounty-grid">
+            {proposals.slice(0, 3).map((t) => (
+              <TaskProposalCard
+                key={t.id}
+                task={t}
+                githubUrl={config.githubUrl}
+              />
+            ))}
+            {bounties.slice(0, Math.max(0, 3 - proposals.length)).map((b) => (
+              <BountyCard key={b.id} bounty={b} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            title="The first tasks are taking shape."
+            description="Official bounty terms will appear after maintainer review. Everyone is welcome to contribute."
+          />
+        )}
+      </section>
+      <section className="principles">
+        <div>
+          <ScanLine />
+          <h3>Sources in sight</h3>
+          <p>
+            Each metric keeps its source and observation time. Missing data
+            stays missing.
+          </p>
+        </div>
+        <div>
+          <Sprout />
+          <h3>Build in the open</h3>
+          <p>
+            Reviewed task terms, GitHub submissions, and a simple path to
+            contributing.
+          </p>
+        </div>
+        <div>
+          <BookOpen />
+          <h3>Payments you can inspect</h3>
+          <p>
+            Manual payments, recorded transparently. Approval and settlement are
+            distinct.
+          </p>
+        </div>
+      </section>
+    </>
+  );
+}
+export function TerminalView({
+  ratio,
+  config,
+}: {
+  ratio: RatioResponse;
+  config: PublicConfig;
+}) {
   return (
     <>
       <div className="page-heading">
-        <div>
-          <p className="eyebrow">
-            APPLES TO PEARS / {terminal ? "MARKETS" : "WORKSPACE"}
-          </p>
-          <h1>
-            {terminal
-              ? "The market, in perspective."
-              : "Finally, comparing apples to pears."}
-          </h1>
-        </div>
-        <div className="page-tools">
-          <span className="network-label">
-            <span className="network-icon">R</span>Robinhood Chain
-          </span>
-          <Button
-            variant="outline"
-            size="icon"
-            title="Refresh market data"
-            aria-label="Refresh market data"
-            disabled={query.isFetching}
-            onClick={() => query.refetch()}
-          >
-            <RefreshCw
-              size={16}
-              className={query.isFetching ? "refreshing" : ""}
-            />
-          </Button>
-        </div>
+        <p className="eyebrow">01 / READ-ONLY OBSERVATORY</p>
+        <h1>
+          A different unit
+          <br />
+          of perspective.
+        </h1>
+        <p>Two separate assets. One comparison. Every source in sight.</p>
       </div>
-      {query.isError && (
-        <div role="alert" className="notice">
-          Refresh failed. The last successful observations remain visible with
-          their original timestamps.
-        </div>
-      )}
-      {terminal ? (
-        <TerminalDetails data={data} />
-      ) : (
-        <>
-          <section className="hero-grid">
-            <div className="ratio-hero">
-              <div className="section-heading">
-                <span className="eyebrow">THE PEAR RATIO</span>
-                <Status status={data.ratio.status} />
-              </div>
-              <div className="ratio-equation">
-                <span className="one-apple">1 Apple =</span>
-                <strong>
-                  {data.ratio.data
-                    ? amount(data.ratio.data.pearsPerApple, 2)
-                    : "—"}
-                </strong>
-                <span className="pears-label">
-                  Pears
-                  <span className="metric-unit"> A2P / AAPL Stock Token</span>
-                </span>
-              </div>
-              <div className="ratio-bottom">
-                <p>
-                  {data.ratio.data
-                    ? "One token-equivalent, a different perspective."
-                    : "Waiting for both timestamped token prices."}
-                </p>
-                <Link href="/terminal" className="text-link">
-                  Explore the terminal <Terminal size={15} />
-                </Link>
-              </div>
-              <div className="hero-footnote">
-                <span>{dateTime(data.ratio.observedAt)}</span>
-                <span>
-                  {data.change24h !== null
-                    ? `${Number(data.change24h) >= 0 ? "+" : ""}${amount(data.change24h, 2)}% ratio / 24h`
-                    : "24h comparison not available"}
-                </span>
-              </div>
-            </div>
-            <div className="mascot-panel">
-              <div className="mascot-caption">
-                <span className="eyebrow">A LITTLE DIFFERENT.</span>
-                <h2>
-                  A pear with
-                  <br />a point of view.
-                </h2>
-              </div>
-              <Image
-                src="/pear-mascot.png"
-                alt="PearOS mascot: a smiling green pear"
-                width="330"
-                height="330"
-                className="hero-mascot"
+      <div className="terminal-grid">
+        <RatioPanel ratio={ratio} symbol={config.symbol} />
+        <section className="panel asset-panel">
+          <div className="section-heading">
+            <h2>Asset identities</h2>
+            <span className="eyebrow">NETWORK + ADDRESS</span>
+          </div>
+          <div className="asset-identity">
+            <span className="asset-letter pear-letter">P</span>
+            <div>
+              <h3>{config.symbol}</h3>
+              <p>{config.projectName} · project token</p>
+              <Address
+                value={config.projectAddress}
+                explorer={config.explorerUrl}
+                label="Project token address"
               />
-              <span className="mascot-code">PEAR / 001</span>
             </div>
-          </section>
-          <div className="metrics-grid">
-            <Metric
-              label="A2P"
-              value={usd(data.a2p.data?.usd)}
-              detail="Apples to Pears · community token"
-              status={data.a2p.status}
-            />
-            <Metric
-              label="AAPL Stock Token"
-              value={usd(data.stock.price.data?.usd)}
-              detail="Token-equivalent USD reference"
-              status={data.stock.price.status}
-            />
-            <Metric
-              label="Paired market"
-              value={data.vault.data?.fundingState || "Not verified"}
-              detail="A separate A2P / AAPL liquidity pool"
-              status={data.vault.status}
-            />
           </div>
-          <div className="overview-lower">
-            <RatioChart history={data.history} />
-            <section className="panel market-overview">
-              <div className="section-heading">
-                <h2>
-                  Two assets.
-                  <br />
-                  Separate identities.
-                </h2>
-                <Layers size={20} />
-              </div>
-              <div className="asset-row">
-                <span className="asset-icon pear-asset">P</span>
-                <div>
-                  <strong>A2P</strong>
-                  <p>Apples to Pears</p>
-                </div>
-                <AddressLink
-                  address={data.a2pAddress}
-                  explorer={data.explorerUrl}
-                />
-              </div>
-              <div className="asset-row">
-                <span className="asset-icon apple-asset">A</span>
-                <div>
-                  <strong>AAPL</strong>
-                  <p>Robinhood Stock Token</p>
-                </div>
-                <AddressLink
-                  address={data.aaplAddress}
-                  explorer={data.explorerUrl}
-                />
-              </div>
-              <p className="small muted">
-                The ratio compares reference prices. It does not imply Apple
-                ownership, backing, or a redemption rate.
+          <div className="asset-identity">
+            <span className="asset-letter">A</span>
+            <div>
+              <h3>AAPL Stock Token</h3>
+              <p>Robinhood reference · compatibility unverified</p>
+              <Address
+                value={config.referenceAddress}
+                explorer={config.explorerUrl}
+                label="Reference token address"
+              />
+            </div>
+          </div>
+          <p className="small muted">
+            {config.chainId
+              ? `Configured chain ${config.chainId} / ${config.networkType || "classification missing"}`
+              : "Network not configured"}
+            . A share quote or another issuer’s token is never substituted.
+          </p>
+        </section>
+      </div>
+      <div className="two-columns price-grid">
+        {(["project", "reference"] as const).map((key) => {
+          const v = ratio.observations[key];
+          return (
+            <section className="panel" key={key}>
+              <p className="eyebrow">
+                {key === "project"
+                  ? config.symbol + " TOKEN PRICE"
+                  : "AAPL STOCK TOKEN REFERENCE"}
               </p>
-              <div className="overview-links">
-                <Link href="/build">
-                  <Sprout size={18} />
-                  <span>Build something useful</span>
-                </Link>
-                <Link href="/studio">
-                  <Palette size={18} />
-                  <span>Make a Pear announcement</span>
-                </Link>
-              </div>
+              <strong className="metric-value">
+                {v.data
+                  ? `${amount(v.data.amount, 8)} ${v.data.currency}`
+                  : "—"}
+              </strong>
+              <p className="small muted">
+                {v.data?.assetLabel || "No verified quote available"} · per
+                whole token
+              </p>
+              <SourceNote value={v} mode={ratio.mode} />
             </section>
-          </div>
-          <div className="observation-strip">
-            <SourceNote value={data.stock.price} />
-            <SourceNote value={data.a2p} />
-          </div>
-        </>
-      )}
-      {terminal && (
-        <section className="panel">
-          <div className="section-heading">
-            <h2>Pear Treasury</h2>
-            <Link href="/treasury" className="text-link">
-              View treasury
-            </Link>
-          </div>
-          {data.treasuryBalances.data ? (
-            <div className="metrics-grid four inset">
-              {data.treasuryBalances.data.map((balance) => (
-                <Metric
-                  key={balance.symbol}
-                  label={`${balance.symbol} balance`}
-                  value={amount(balance.amount)}
-                  status={data.treasuryBalances.status}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="muted">
-              Configure a treasury wallet to display its balances.
-            </p>
-          )}
-          <SourceNote value={data.treasuryBalances} />
-        </section>
-      )}
-      {terminal && (
-        <section className="panel">
-          <div className="section-heading">
-            <h2>Recent A2P transfers</h2>
-            <span className="small muted">Bounded onchain window</span>
-          </div>
-          {activity.data ? (
-            <TransferTable
-              observation={ageSources(activity.data, activity.isError, now)}
-              explorer={data.explorerUrl}
-            />
-          ) : (
-            <p className="muted">
-              {activity.isError
-                ? "Transfer data is unavailable."
-                : "Reading recent token events…"}
-            </p>
-          )}
-        </section>
-      )}
-    </>
-  );
-}
-
-function TerminalDetails({ data }: { data: Dashboard }) {
-  const pons = data.pons.data,
-    vault = data.vault.data,
-    project = data.project.data;
-  const feeRouting =
-    pons && vault
-      ? pons.feeRecipient.toLowerCase() === vault.address.toLowerCase()
-      : null;
-  return (
-    <>
-      <div className="terminal-summary">
-        <div>
-          <span className="eyebrow">1 AAPL STOCK TOKEN</span>
-          <strong>
-            {amount(data.ratio.data?.pearsPerApple, 2)} <span>A2P</span>
-          </strong>
-        </div>
-        <SourceNote value={data.ratio} />
-      </div>
-      <div className="metrics-grid four">
-        <Metric
-          label="A2P price"
-          value={usd(data.a2p.data?.usd)}
-          status={data.a2p.status}
-        />
-        <Metric
-          label="Indexed liquidity"
-          value={usd(project?.liquidityUsd)}
-          status={data.project.status}
-          detail="USD · Pair index scope"
-        />
-        <Metric
-          label="24h volume"
-          value={usd(project?.volume24hUsd)}
-          status={data.project.status}
-          detail="USD · Pair index scope"
-        />
-        <Metric
-          label="Holder count"
-          value={amount(data.holderCount.data, 0)}
-          status={data.holderCount.status}
-          detail="Full holder index required in live mode"
-        />
+          );
+        })}
       </div>
       <div className="two-columns">
-        <section className="panel">
-          <div className="section-heading">
-            <h2>Official Pons market</h2>
-            <Status status={data.pons.status} />
-          </div>
-          <dl className="detail-list">
-            <Row
-              label="Market status"
-              value={pons?.phaseLabel || "Unavailable"}
-            />
-            <Row
-              label="Quote asset"
-              value={pons?.quoteSymbol || "Unavailable"}
-            />
-            <Row
-              label="Bonding curve"
-              value={
-                <AddressLink
-                  address={pons?.curve}
-                  explorer={data.explorerUrl}
-                />
-              }
-            />
-            <Row
-              label="Raised (current curve / sweep)"
-              value={
-                pons?.raised !== null && pons?.raised !== undefined
-                  ? `${amount(pons.raised)} ${pons.quoteSymbol}`
-                  : "Not available for this phase"
-              }
-            />
-            <Row
-              label="Graduation progress"
-              value={
-                pons?.progressPercent !== null &&
-                pons?.progressPercent !== undefined
-                  ? `${amount(pons.progressPercent, 1)}%`
-                  : "Unavailable"
-              }
-            />
-            <Row
-              label="Creator tax"
-              value={
-                pons ? `${amount(pons.creatorTaxBps / 100, 2)}%` : "Unavailable"
-              }
-            />
-            <Row
-              label="Pons fee recipient"
-              value={
-                <AddressLink
-                  address={pons?.feeRecipient}
-                  explorer={data.explorerUrl}
-                />
-              }
-            />
-            <Row
-              label="Fees currently route to Pair vault"
-              value={
-                feeRouting === null
-                  ? "Unknown"
-                  : feeRouting
-                    ? "Yes"
-                    : "No · recipient changed"
-              }
-            />
-          </dl>
-          <SourceNote value={data.pons} />
+        <section className="panel history-empty">
+          <span className="eyebrow">HISTORY</span>
+          <EmptyState
+            title="A curve needs real observations."
+            description="Historical data has not been verified. No chart or 24-hour change is fabricated; this release does not store price history."
+          />
         </section>
         <section className="panel">
-          <div className="section-heading">
-            <h2>A2P / AAPL paired pool</h2>
-            <Status status={data.vault.status} />
-          </div>
-          <dl className="detail-list">
-            <Row
-              label="Funding state"
-              value={vault?.fundingState || "Unavailable"}
-            />
-            <Row
-              label="Pool"
-              value={
-                <AddressLink
-                  address={vault?.pool}
-                  explorer={data.explorerUrl}
-                />
-              }
-            />
-            <Row
-              label="Reserve spot ratio"
-              value={
-                vault?.poolPearsPerApple
-                  ? `${amount(vault.poolPearsPerApple, 2)} A2P / AAPL`
-                  : "Unavailable"
-              }
-            />
-            <Row
-              label="Vault"
-              value={
-                <AddressLink
-                  address={vault?.address}
-                  explorer={data.explorerUrl}
-                />
-              }
-            />
-            <Row
-              label="Creator"
-              value={
-                <AddressLink
-                  address={vault?.creator || project?.creator}
-                  explorer={data.explorerUrl}
-                />
-              }
-            />
-            <Row
-              label="Vault execution"
-              value={
-                vault ? (vault.paused ? "Paused" : "Not paused") : "Unknown"
-              }
-            />
-            <Row
-              label="A2P inventory in vault"
-              value={
-                vault ? `${amount(vault.a2pInventory)} A2P` : "Unavailable"
-              }
-            />
-            <Row
-              label="AAPL inventory in vault"
-              value={
-                vault ? `${amount(vault.quoteInventory)} AAPL` : "Unavailable"
-              }
-            />
-          </dl>
-          <p className="small muted">
-            Pool reserves describe a spot rate before fees and slippage. An
-            asset appearing in search does not verify its launch or conversion
-            route.
+          <span className="eyebrow">MARKET / POOL</span>
+          <h2>A market is more than an address.</h2>
+          <p className="muted">
+            Market creation, liquidity and tradability have not been verified.
+            The ratio does not establish that a funded pool exists.
           </p>
-          <SourceNote value={data.vault} />
+          <button className="button secondary" disabled>
+            Market not verified
+          </button>
+          <p className="small muted">
+            External trading becomes available only after the intended market
+            and asset pair are verified.
+          </p>
         </section>
       </div>
-      <section className="panel">
-        <div className="section-heading">
-          <h2>Follow the proceeds</h2>
-          <span className="small muted">
-            Separate balances, separate stages
-          </span>
-        </div>
-        <div className="metrics-grid four inset">
-          <Metric
-            label="Released escrow · unclaimed"
-            value={vault ? `${amount(vault.releasedEscrowEth)} ETH` : "—"}
-            detail="Released by Pons; still outside the vault"
-          />
-          <Metric
-            label="Reserved for liquidity"
-            value={vault ? `${amount(vault.reservedLiquidityEth)} ETH` : "—"}
-            detail="Vault reserve; not deposited liquidity"
-          />
-          <Metric
-            label="Creator credit"
-            value={vault ? `${amount(vault.creatorClaimableEth)} ETH` : "—"}
-            detail="Current claimable creator allocation"
-          />
-          <Metric
-            label="Native spend to date"
-            value={vault ? `${amount(vault.totalInvestedEth)} ETH` : "—"}
-            detail="Cumulative execution spend, net refunds"
-          />
-        </div>
-        <p className="small muted">
-          Revenue-path receipts:{" "}
-          {vault ? `${amount(vault.totalReceivedEth)} ETH` : "unavailable"}.
-          These may include plain ETH donations. Reserved for the separate PAIR
-          buyback engine:{" "}
-          {vault
-            ? `${amount(vault.reservedPairBuybackEth)} ETH`
-            : "unavailable"}
-          . Neither figure proves a completed buyback or future revenue.
-        </p>
-        <SourceNote value={data.vault} />
-      </section>
-      <div className="two-columns">
-        <section className="panel">
-          <h2>AAPL reference</h2>
-          <dl className="detail-list">
-            <Row
-              label="Token-equivalent USD"
-              value={usd(data.stock.price.data?.usd)}
-            />
-            <Row
-              label="Corporate-action multiplier"
-              value={data.stock.metadata.data?.multiplier || "Unavailable"}
-            />
-            <Row
-              label="Asset status"
-              value={data.stock.metadata.data?.status || "Unavailable"}
-            />
-            <Row
-              label="Trading halt"
-              value={
-                data.stock.halted === null
-                  ? "Unknown"
-                  : data.stock.halted
-                    ? "Halted"
-                    : "No halt reported"
-              }
-            />
-            <Row
-              label="Pending multiplier"
-              value={
-                data.stock.metadata.data?.pendingMultiplier ||
-                (data.stock.metadata.data ? "None reported" : "Unknown")
-              }
-            />
-          </dl>
-          <p className="small muted">
-            A halt flag or an active asset status does not guarantee that an
-            A2P/AAPL DEX route is executable.
-          </p>
-          <SourceNote value={data.stock.price} />
-          <SourceNote value={data.stock.metadata} />
-        </section>
-        <section className="panel">
-          <h2>Launch readiness</h2>
-          <dl className="detail-list">
-            <Row
-              label="AAPL in Pair search"
-              value={
-                data.readiness.asset.data
-                  ? data.readiness.asset.data.discovered
-                    ? "Matching address found"
-                    : "Not found"
-                  : "Unavailable"
-              }
-            />
-            <Row
-              label="Pair launch configuration"
-              value={
-                data.readiness.economics.data
-                  ? data.readiness.economics.data.launchConfigured &&
-                    data.readiness.economics.data.enabled
-                    ? "Enabled in source snapshot"
-                    : "Disabled in source snapshot"
-                  : "Unavailable"
-              }
-            />
-            <Row
-              label="A2P / AAPL launch route"
-              value="Not verified by this app"
-            />
-            <Row
-              label="A2P valuation"
-              value={`${usd(project?.valuationUsd)}${project?.valuationBasis ? ` · ${project.valuationBasis}` : ""}`}
-            />
-          </dl>
-          <p className="small muted">
-            The official Pair launch flow authenticates your wallet and
-            simulates the actual launch. Use that result to verify eligibility
-            and route support.
-          </p>
-          <a
-            className="text-link"
-            href="https://pair.trade/launch"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Open Pair’s launch flow
-          </a>
-          <SourceNote value={data.readiness.economics} />
-          <SourceNote value={data.readiness.asset} />
-        </section>
-      </div>
-      <RatioChart history={data.history} />
     </>
-  );
-}
-function Row({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div>
-      <dt>{label}</dt>
-      <dd>{value}</dd>
-    </div>
   );
 }

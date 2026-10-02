@@ -1,0 +1,16 @@
+[
+  {
+    "bountyId": "demo-docs",
+    "recipient": "0x1111111111111111111111111111111111111111",
+    "asset": {
+      "chainId": 31337,
+      "kind": "native",
+      "address": null,
+      "symbol": "DEMO",
+      "decimals": 18
+    },
+    "amount": "60",
+    "chainId": 31337,
+    "transactionHash": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+]

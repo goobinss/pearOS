@@ -1,157 +1,208 @@
-/** Public JSON contract returned by Pear Core v1. Decimal quantities are strings. */
-export type Freshness = "live" | "cached" | "stale" | "unavailable" | "demo";
-export interface Observation<T> {
+export type DataMode = "demo" | "live";
+export type DataStatus = "ok" | "stale" | "unavailable" | "unconfigured";
+export type Observation<T> = {
   data: T | null;
-  status: Freshness;
+  status: DataStatus;
   source: string;
   observedAt: string | null;
   fetchedAt: string;
-  freshUntil?: string;
-  message?: string;
-  blockNumber?: string;
-}
-export interface Price { usd: string; basis: string; address: string }
-export interface RatioPoint {
-  timestamp: string;
-  pearsPerApple: string;
-  aaplPriceUsd: string;
-  a2pPriceUsd: string;
-}
-export interface Balance {
-  symbol: string;
-  address: string | null;
-  amount: string | null;
-  decimals: number | null;
-  valueUsd: string | null;
-  message?: string;
-}
-export interface Transfer {
-  hash: string;
-  logIndex?: number;
-  blockHash?: string;
-  tokenAddress?: string;
-  blockNumber: string;
-  timestamp: string;
-  from: string;
-  to: string;
+  reason: string | null;
+};
+export type Price = {
   amount: string;
-  symbol: string;
-  direction: "in" | "out" | "self" | "transfer";
-  category: string;
-}
-export interface StockAsset {
-  address: string;
-  name: string;
-  symbol: string;
-  multiplier: string;
-  pendingMultiplier: string | null;
-  pendingMultiplierEffectiveTime: string | null;
-  status: string;
-  tradingCapabilities: Record<string, unknown> | null;
-}
-export interface PairProject {
-  address: string;
-  name: string;
-  symbol: string;
-  creator: string;
-  vault: string;
-  curve: string;
-  quote: string;
-  version: number;
-  priceUsd: string | null;
-  liquidityUsd: string | null;
-  volume24hUsd: string | null;
-  valuationUsd: string | null;
-  valuationBasis: string | null;
-  priceUpdatedAt: string | null;
-  priceStale: boolean;
-}
-export interface VaultState {
-  address: string;
-  creator: string;
-  quote: string;
-  pool: string | null;
-  paused: boolean;
-  ethBalance: string;
-  a2pInventory: string;
-  quoteInventory: string;
-  reservedLiquidityEth: string;
-  creatorClaimableEth: string;
-  releasedEscrowEth: string;
-  totalReceivedEth: string;
-  totalInvestedEth: string;
-  reservedPairBuybackEth: string;
-  fundingState: string;
-  poolPearsPerApple: string | null;
-}
-export interface PonsState {
-  curve: string;
-  deployer: string;
-  feeRecipient: string;
-  quote: string;
-  quoteSymbol: string;
-  phase: number;
-  phaseLabel: string;
-  creatorTaxBps: number;
-  raised: string | null;
-  threshold: string;
-  progressPercent: string | null;
-  marginalQuotePerA2p: string | null;
-  readyToGraduate: boolean | null;
-}
-export interface Dashboard {
-  mode: "live" | "demo";
-  chainId: number;
-  a2pAddress: string | null;
-  aaplAddress: string | null;
-  treasuryAddress: string | null;
-  treasuryBalances: Observation<Balance[]>;
-  explorerUrl: string;
+  currency: string;
+  basis: "one-whole-token";
+  assetLabel: string;
+};
+export type RatioResponse = {
+  mode: DataMode;
+  status: DataStatus;
+  ratio: string | null;
+  currency: string | null;
+  unitBasis: string;
+  source: string;
+  observedAt: string | null;
   fetchedAt: string;
-  stock: { metadata: Observation<StockAsset>; price: Observation<Price>; halted: boolean | null };
-  project: Observation<PairProject>;
-  readiness: {
-    economics: Observation<{ launchConfigured: boolean; enabled: boolean; factory: string }>;
-    asset: Observation<{ discovered: boolean; address: string | null; routeVerified: boolean }>;
-  };
-  pons: Observation<PonsState>;
-  vault: Observation<VaultState>;
-  history: Observation<RatioPoint[]>;
-  a2p: Observation<Price>;
-  ratio: Observation<RatioPoint>;
-  change24h: string | null;
-  holderCount: Observation<number>;
-}
-export interface Treasury {
+  reason: string | null;
+  observations: { project: Observation<Price>; reference: Observation<Price> };
+};
+export type Asset = {
+  chainId: number;
+  kind: "native" | "erc20";
   address: string | null;
-  balances: Observation<Balance[]>;
-  totalValueUsd: string | null;
-  knownValueUsd: string;
-  unpriced: number;
-  transactions: Observation<Transfer[]>;
-  prices: Observation<Price>[];
-}
-export interface RatioResponse {
-  mode: "live" | "demo";
-  status: Freshness;
-  currency: "USD";
-  aaplPrice: string | null;
-  a2pPrice: string | null;
-  pearsPerApple: string | null;
-  timestamp: string | null;
-  percentageChange24h: string | null;
-  priceUnits: string;
-  fetchedAt: string;
-  message: string | null;
-  sources: { aapl: Observation<Price>; a2p: Observation<Price> };
-  assets: { chainId: number; aapl: string | null; a2p: string | null };
-}
-export interface PublicConfig {
+  symbol: string;
+  decimals: number;
+};
+export type Workflow =
+  | "Open"
+  | "Assigned"
+  | "Submitted"
+  | "Changes requested"
+  | "Approved"
+  | "Cancelled";
+export type Bounty = {
+  id: string;
+  title: string;
+  summary: string;
+  category: "Engineering" | "Design" | "Community";
+  issueNumber: number;
+  acceptanceCriteria: string[];
+  reward: { asset: Asset; amount: string };
+  state: Workflow;
+  assignedTo?: string;
+  submissionUrl?: string;
+  cancellationReason?: string;
+};
+export type PaymentStatus =
+  | "verified"
+  | "pending"
+  | "reverted"
+  | "mismatched"
+  | "unverified";
+export type Payout = {
+  bountyId: string;
+  recipient: string;
+  asset: Asset;
+  amount: string;
   chainId: number;
-  rpcUrl: string;
-  explorerUrl: string;
-  a2pAddress: string | null;
-  aaplAddress: string | null;
-  demo: boolean;
-  holderMinimum: string;
-}
+  transactionHash: string;
+  logIndex?: number;
+};
+export type PaymentCheck = {
+  status: PaymentStatus;
+  reason: string;
+  checkedAt: string | null;
+};
+export type BountyView = Bounty & {
+  mode: DataMode;
+  issue: Observation<{ title: string; state: string; url: string }>;
+  payment: PaymentCheck | null;
+};
+// Proposals have no promised reward or assignment. Reviewed paid work belongs
+// in the bounty registry after the owner confirms its exact terms.
+export type TaskProposal = {
+  id: string;
+  title: string;
+  summary: string;
+  category: "Engineering" | "Design" | "Community";
+  state: "Planning";
+  steps: string[];
+  acceptanceCriteria: string[];
+  deliverables: string[];
+  approvalNote: string;
+};
+export type Balance = { asset: Asset; raw: string; amount: string };
+export type Commitment = { asset: Asset; amount: string };
+export type TreasuryView = {
+  mode: DataMode;
+  address: string | null;
+  explorerUrl: string | null;
+  balances: Observation<Balance[]>;
+  commitments: Commitment[];
+  payouts: { record: Payout; check: PaymentCheck }[];
+  budget: BudgetView;
+};
+
+export type BudgetBucket =
+  | "contributors"
+  | "support"
+  | "operations"
+  | "ecosystem"
+  | "reserve";
+export type BudgetPolicy = {
+  id: string;
+  status: "proposal" | "approved";
+  effectiveFrom: string;
+  approvedAt: string | null;
+  legalReviewedAt: string | null;
+  allocations: { bucket: BudgetBucket; percent: number }[];
+};
+
+/** Owner-reviewed net receipts. An entry is an attestation, not an RPC verification. */
+export type TreasuryReceipt = {
+  id: string;
+  policyId: string;
+  asset: Asset;
+  grossAmount: string;
+  costs: string;
+  netAmount: string;
+  receivedAt: string;
+  source: string;
+  evidenceUrl: string;
+  entitlementUrl: string;
+  reviewedAt: string;
+  reviewedBy: string;
+};
+
+/** Non-bounty spending is approved and sent manually, then checked read-only. */
+export type BudgetDisbursement = Omit<
+  Payout,
+  "bountyId" | "transactionHash"
+> & {
+  id: string;
+  bucket: Exclude<BudgetBucket, "contributors">;
+  purpose: string;
+  approvedAt: string;
+  roundId?: string;
+  transactionHash: string | null;
+};
+
+export type SupportRound = {
+  id: string;
+  policyId: string;
+  asset: Asset;
+  budget: string;
+  capPerParticipant: string;
+  opensAt: string;
+  closesAt: string;
+  reviewAt: string;
+  approvedAt: string;
+  eligibility: string[];
+  methodology: string;
+  jurisdictions: string[];
+  reviewUrl: string;
+  closedAt: string | null;
+  releasedAmount: string;
+};
+
+export type BudgetAccount = {
+  asset: Asset;
+  netReceipts: string;
+  buckets: {
+    bucket: BudgetBucket;
+    allocated: string;
+    committed: string;
+    verifiedSettled: string;
+    remaining: string;
+  }[];
+};
+export type BudgetView = {
+  policies: BudgetPolicy[];
+  receipts: TreasuryReceipt[];
+  accounts: BudgetAccount[];
+  disbursements: { record: BudgetDisbursement; check: PaymentCheck }[];
+  rounds: SupportRound[];
+};
+
+export type PublicConfig = {
+  mode: DataMode;
+  symbol: string;
+  projectName: string;
+  chainId: number | null;
+  networkType: "mainnet" | "testnet" | null;
+  explorerUrl: string | null;
+  projectAddress: string | null;
+  referenceAddress: string | null;
+  treasuryAddress: string | null;
+  marketUrl: string | null;
+  githubUrl: string | null;
+};
+export type BackendDashboard = {
+  version: 1;
+  contentDigest: string;
+  contentRevision: string;
+  config: PublicConfig;
+  ratio: RatioResponse;
+  bounties: BountyView[];
+  treasury: TreasuryView;
+};

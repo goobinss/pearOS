@@ -1,0 +1,16 @@
+node_modules
+.next
+pnpm-lock.yaml
+*.tsbuildinfo
+.env*
+LICENSE
+NOTICE
+THIRD_PARTY_NOTICES.md
+docs/screenshots
+playwright-report
+test-results
+
+.local-archive
+docs/DESIGN.md
+docs/VERIFICATION.md
+apps/web/CLAUDE.md

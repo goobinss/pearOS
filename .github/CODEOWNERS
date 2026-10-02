@@ -1,2 +1,12 @@
+# Requires branch protection + required CODEOWNERS review in host settings.
 * @goobinss
-/.github/CODEOWNERS @goobinss
+/apps/web/content/ @goobinss
+/apps/web/lib/config.ts @goobinss
+/apps/web/lib/backend.ts @goobinss
+/packages/shared-types/ @goobinss
+/INTEGRATIONS.md @goobinss
+/.env.example @goobinss
+/apps/web/.env.example @goobinss
+/**/package.json @goobinss
+/pnpm-lock.yaml @goobinss
+/.github/ @goobinss
