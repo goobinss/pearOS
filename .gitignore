@@ -11,3 +11,14 @@ private/
 *.tsbuildinfo
 coverage/
 .DS_Store
+
+playwright-report/
+test-results/
+.pnpm-store/
+
+# Local review evidence and preserved references
+docs/screenshots/
+docs/DESIGN.md
+docs/VERIFICATION.md
+.local-archive/
+apps/web/CLAUDE.md

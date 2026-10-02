@@ -1,0 +1,95 @@
+[
+  {
+    "id": "demo-a11y",
+    "title": "Make every pear accessible",
+    "summary": "Review the four screens with a keyboard and document actionable accessibility fixes.",
+    "category": "Engineering",
+    "issueNumber": 1,
+    "acceptanceCriteria": [
+      "All four screens can be navigated without a mouse.",
+      "Report includes reproduction steps and proposed fixes."
+    ],
+    "reward": {
+      "asset": {
+        "chainId": 31337,
+        "kind": "native",
+        "address": null,
+        "symbol": "DEMO",
+        "decimals": 18
+      },
+      "amount": "125"
+    },
+    "state": "Open"
+  },
+  {
+    "id": "demo-contribution",
+    "title": "Write the first-contribution guide",
+    "summary": "Help a new contributor go from a useful idea to a reviewable deliverable.",
+    "category": "Community",
+    "issueNumber": 2,
+    "acceptanceCriteria": [
+      "Explain claims, assignment, submission and manual payment.",
+      "Use plain language and include one worked example."
+    ],
+    "reward": {
+      "asset": {
+        "chainId": 31337,
+        "kind": "native",
+        "address": null,
+        "symbol": "DEMO",
+        "decimals": 18
+      },
+      "amount": "80"
+    },
+    "state": "Assigned",
+    "assignedTo": "example-contributor"
+  },
+  {
+    "id": "demo-mobile",
+    "title": "Polish the mobile task board",
+    "summary": "Improve scanning and touch interaction on the smallest screens.",
+    "category": "Design",
+    "issueNumber": 3,
+    "acceptanceCriteria": [
+      "No horizontal overflow at 360px.",
+      "Controls have visible keyboard focus and clear labels."
+    ],
+    "reward": {
+      "asset": {
+        "chainId": 31337,
+        "kind": "native",
+        "address": null,
+        "symbol": "DEMO",
+        "decimals": 18
+      },
+      "amount": "100"
+    },
+    "state": "Submitted",
+    "assignedTo": "example-contributor",
+    "submissionUrl": "https://example.com/demo-deliverable"
+  },
+  {
+    "id": "demo-docs",
+    "title": "Document the ratio states",
+    "summary": "Explain what the comparison means and why source timestamps matter.",
+    "category": "Community",
+    "issueNumber": 4,
+    "acceptanceCriteria": [
+      "Cover missing, stale and mismatched currencies.",
+      "Never describe the ratio as a redemption rate."
+    ],
+    "reward": {
+      "asset": {
+        "chainId": 31337,
+        "kind": "native",
+        "address": null,
+        "symbol": "DEMO",
+        "decimals": 18
+      },
+      "amount": "60"
+    },
+    "state": "Approved",
+    "assignedTo": "example-contributor",
+    "submissionUrl": "https://example.com/demo-deliverable"
+  }
+]

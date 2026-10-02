@@ -4,34 +4,35 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22.13.0"
+    "node": "22.23.3"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test tests/*.test.ts"
+    "test": "node --conditions=react-server --import tsx --test tests/*.test.ts",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@pearos/sdk": "workspace:*",
+    "@fontsource/inter": "5.2.8",
     "@pearos/shared-types": "workspace:*",
     "@pearos/ui": "workspace:*",
+    "lucide-react": "1.31.0",
     "next": "16.3.8",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "viem": "2.56.8",
-    "wagmi": "3.7.7",
-    "@tanstack/react-query": "5.103.2",
-    "lucide-react": "1.31.0"
+    "server-only": "0.0.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.11.1",
+    "@playwright/test": "1.58.2",
     "@tailwindcss/postcss": "4.2.1",
-    "tailwindcss": "4.2.1",
-    "typescript": "5.9.3",
-    "tsx": "4.23.15",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
-    "@types/react-dom": "19.2.3"
+    "@types/react-dom": "19.2.3",
+    "tailwindcss": "4.2.1",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
   }
 }

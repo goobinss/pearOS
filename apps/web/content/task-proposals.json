@@ -1,0 +1,54 @@
+[
+  {
+    "id": "community-x",
+    "title": "Build a community-run X / Twitter presence",
+    "summary": "Help shape PearOS's voice and a community editorial process. Start with a proposal; the owner approves the account, contributors and posts before anything goes public.",
+    "category": "Community",
+    "state": "Planning",
+    "steps": [
+      "Read the project homepage and download the proposal template below. No coding is needed.",
+      "Suggest an account name, a short bio, community guidelines and a simple process for reviewing posts.",
+      "Draft five example posts and a one-week content plan in a document. Keep drafts private until reviewed.",
+      "Open the prefilled task conversation and introduce yourself. Share your proposal or a document link; wait for the owner to confirm scope, assignment and the exact reward.",
+      "After approval, help the owner set up the account using delegated access where supported. Submit the drafts for review before publishing."
+    ],
+    "acceptanceCriteria": [
+      "A clear voice, bio and community conduct policy match PearOS's identity.",
+      "Five draft posts and a one-week plan include a named owner approval step before publication.",
+      "The handoff explains how community members suggest posts and how access is granted and removed.",
+      "No posts promise returns or imply Apple, Robinhood or platform endorsement."
+    ],
+    "deliverables": [
+      "One proposal document with account/bio suggestions and editorial guidelines.",
+      "Five draft posts and a one-week content plan.",
+      "An owner-approved setup and handoff checklist."
+    ],
+    "approvalNote": "Do not register an official account, post as PearOS or share account passwords before owner approval. Rewards and any paid assignment must be confirmed before paid work begins."
+  },
+  {
+    "id": "community-discord",
+    "title": "Build a welcoming PearOS Discord",
+    "summary": "Design a friendly home for introductions, project updates and contribution help. The owner reviews the plan, server permissions and moderation approach before opening it to the community.",
+    "category": "Community",
+    "state": "Planning",
+    "steps": [
+      "Download the proposal template and sketch a small channel list: welcome, announcements, general chat and contribution help.",
+      "Write a welcome message, rules and a short guide for joining a task. A document or screenshots are enough; no code is needed.",
+      "Propose member/moderator roles, permission settings and a simple moderation process.",
+      "Open the prefilled task conversation, introduce yourself and attach your plan. Wait for the owner to confirm assignment, scope and the exact reward.",
+      "After approval, configure an owner-controlled server and test access with a normal member account. Ask the owner to review it before publishing an invite."
+    ],
+    "acceptanceCriteria": [
+      "A small channel structure, welcome message and contribution guide are clear to a first-time visitor.",
+      "Announcements are restricted to approved maintainers; moderator permissions follow the reviewed plan.",
+      "Rules and moderation guidance cover spam, impersonation and unsolicited wallet/account requests.",
+      "The owner controls the server and approves the permissions, bot choices and public invite."
+    ],
+    "deliverables": [
+      "A channel/role plan plus welcome text, rules and moderation guidance.",
+      "Screenshots or a checklist showing normal-member permission tests after approved setup.",
+      "An owner-approved handoff and invitation checklist."
+    ],
+    "approvalNote": "Do not publish an official invite, install paid bots or grant administrator access before owner approval. Rewards and any paid assignment must be confirmed before paid work begins."
+  }
+]

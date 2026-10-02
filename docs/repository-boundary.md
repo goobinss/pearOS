@@ -1,13 +1,7 @@
-# Repository boundary
+# Public boundary
 
-```text
-pearOS web / SDK  -- HTTPS GET /v1/* -->  Pear Core API
-Pear Core may consume intentionally public contracts from pearOS.
-pearOS never imports Pear Core code.
-```
+PearOS contains presentation, public contracts, reviewed content and an authenticated server-only HTTP client for Pear Core. Private code is never imported, bundled or mirrored here. Live financial validation and provider reads belong to Pear Core.
 
-Public code includes the website, UI components, mock data, read-only SDK, response types, examples, docs, and public tests. The web app's `/api/*` proxy accepts only named read-only routes and forwards to the configured public API. Demo responses come from local mock data; wallet verification never uses mock balances.
+The browser only talks to PearOS; no backend credential, RPC URL, GitHub token or Vercel bypass secret is returned in public config or logs. Official task/reward/payment terms remain in `apps/web/content`. Pear Core reads a reviewed commit and verifies the same content digest before its results are used.
 
-Private Pear Core code owns RPC adapters, market source parsing, database access, authenticated snapshots, infrastructure, signing, execution, admin operations, and future anti-abuse rules. The public contract describes responses, not private storage or source selection.
-
-Public endpoint changes should update `packages/shared-types`, `packages/sdk`, `docs/api.md`, and a corresponding public example or test. Backend changes should implement the contract without introducing a reverse dependency from PearOS into Pear Core.
+Both services are GET-only. Signing, sending, claims, swaps and token deployment remain manual. Local environment files, screenshot archives and preserved unused references are ignored. Run boundary checks and scan working sources plus reachable history before publishing; never rewrite history to hide a leak.

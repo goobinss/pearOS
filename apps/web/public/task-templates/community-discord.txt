@@ -1,0 +1,37 @@
+PEAROS / COMMUNITY DISCORD PROPOSAL
+Task ID: community-discord
+Reward: To be confirmed by the owner before any paid work.
+Status: Planning; no assignment or permission to publish is granted.
+
+YOUR INTRODUCTION
+Name / GitHub username:
+Relevant experience (one or two sentences):
+When you are available:
+
+YOUR PLAN
+Proposed channel list (keep it small):
+Welcome message:
+Community rules:
+First-time contributor guide:
+Member and moderator roles:
+Who can post announcements:
+Moderation and spam/impersonation handling:
+Any proposed bots, their permissions and costs:
+
+AFTER OWNER APPROVAL
+Owner-controlled server setup steps:
+Normal-member permission test checklist:
+Screenshots or document links:
+Owner review and public-invite approval checklist:
+Handoff / access-removal notes:
+Questions for the owner:
+
+HOW TO SEND THIS
+On Build Pear, choose "Open proposal on GitHub". Sign in or create a free
+account, add your introduction and plan to the draft, then submit it.
+You may attach this file or share a document link. No coding or Git
+commands are needed. Keep future updates in that same conversation.
+Wait for the owner to confirm scope, assignment and exact reward terms
+before paid work. Do not publish invites, install paid bots or grant
+administrator access before owner approval. Never include passwords,
+recovery codes or private account information.

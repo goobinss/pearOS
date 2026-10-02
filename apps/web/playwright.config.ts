@@ -1,0 +1,83 @@
+import { defineConfig } from "@playwright/test";
+// Explicitly blank production integrations, even if the developer has local env files.
+const blank = {
+  BACKEND_URL: "",
+  BACKEND_ALLOWED_HOSTS: "",
+  BACKEND_READ_TOKEN: "",
+  BACKEND_VERCEL_BYPASS: "",
+  VERCEL: "0",
+  CHAIN_ID: "",
+  NETWORK_TYPE: "",
+  RPC_URL: "",
+  RPC_ALLOWED_HOSTS: "",
+  CHAIN_VERIFIED_AT: "",
+  PAYMENT_CONFIRMATIONS: "",
+  PROJECT_TOKEN_ADDRESS: "",
+  PROJECT_TOKEN_DECIMALS: "",
+  REFERENCE_TOKEN_ADDRESS: "",
+  REFERENCE_TOKEN_DECIMALS: "",
+  TREASURY_ADDRESS: "",
+  EXPLORER_BASE_URL: "",
+  MARKET_URL: "",
+  GITHUB_OWNER: "",
+  GITHUB_REPO: "",
+  GITHUB_READ_TOKEN: "",
+  NATIVE_SYMBOL: "",
+  NATIVE_DECIMALS: "",
+  PROJECT_SYMBOL: "A2P",
+  PROJECT_NAME: "PEAR",
+};
+export default defineConfig({
+  testDir: "./e2e",
+  fullyParallel: false,
+  workers: 1,
+  timeout: 30000,
+  reporter: [["list"], ["html", { open: "never" }]],
+  use: { baseURL: "http://127.0.0.1:3200", trace: "retain-on-failure" },
+  webServer: [
+    {
+      command: "node e2e/backend-fixture.mjs",
+      url: "http://127.0.0.1:3210/health",
+      reuseExistingServer: false,
+      env: {
+        CORE_READ_TOKEN: "pearos-server-boundary-canary-" + "x".repeat(20),
+      },
+    },
+    {
+      command: "pnpm start --hostname 127.0.0.1 --port 3203",
+      url: "http://127.0.0.1:3203",
+      reuseExistingServer: false,
+      env: {
+        ...blank,
+        DATA_MODE: "live",
+        BACKEND_URL: "http://127.0.0.1:3210",
+        BACKEND_READ_TOKEN: "pearos-server-boundary-canary-" + "x".repeat(20),
+      },
+    },
+    {
+      command: "pnpm start --hostname 127.0.0.1 --port 3202",
+      url: "http://127.0.0.1:3202",
+      reuseExistingServer: false,
+      env: {
+        ...blank,
+        DATA_MODE: "demo",
+        PROJECT_TOKEN_ADDRESS: "0x1111111111111111111111111111111111111111",
+        GITHUB_OWNER: "goobinss",
+        GITHUB_REPO: "pearOS",
+        GITHUB_READ_TOKEN: "pearos-server-boundary-canary",
+      },
+    },
+    {
+      command: "pnpm start --hostname 127.0.0.1 --port 3200",
+      url: "http://127.0.0.1:3200",
+      reuseExistingServer: false,
+      env: { ...blank, DATA_MODE: "demo" },
+    },
+    {
+      command: "pnpm start --hostname 127.0.0.1 --port 3201",
+      url: "http://127.0.0.1:3201",
+      reuseExistingServer: false,
+      env: { ...blank, DATA_MODE: "live" },
+    },
+  ],
+});

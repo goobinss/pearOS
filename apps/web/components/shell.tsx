@@ -1,100 +1,116 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { WalletControl } from "./wallet";
-import { usePublicConfig } from "./providers";
-
+import { useState } from "react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
+import type { PublicConfig } from "@/lib/config";
 const links = [
-  ["/", "Overview"],
   ["/terminal", "Terminal"],
-  ["/treasury", "Treasury"],
   ["/build", "Build Pear"],
-  ["/studio", "Pear Studio"],
+  ["/treasury", "Treasury"],
 ];
-export function Header() {
-  const pathname = usePathname();
+export function Header({ config }: { config: PublicConfig }) {
+  const path = usePathname(),
+    [open, setOpen] = useState(false);
   return (
     <>
-      <a className="skip-link" href="#main">
+      <a href="#main" className="skip-link">
         Skip to content
       </a>
       <header className="site-header">
         <div className="header-inner">
-          <Link className="brand" href="/" aria-label="PearOS home">
-            <span className="brand-icon">
-              <Image src="/pear-mascot.png" width={34} height={34} alt="" />
-            </span>
+          <Link href="/" className="brand" aria-label="PearOS home">
+            <Image src="/pear-mascot.png" alt="" width={32} height={40} />
             <span>
               Pear<span className="brand-os">OS</span>
             </span>
-            <span className="version-label">V1</span>
+            <span className="version-label">01</span>
           </Link>
-          <nav aria-label="Main navigation">
+          <button
+            className="menu-button"
+            aria-expanded={open}
+            aria-controls="main-nav"
+            aria-label={open ? "Close menu" : "Open menu"}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <X /> : <Menu />}
+          </button>
+          <nav
+            id="main-nav"
+            aria-label="Main navigation"
+            className={open ? "is-open" : ""}
+          >
             {links.map(([href, label]) => (
               <Link
                 key={href}
                 href={href}
-                aria-current={pathname === href ? "page" : undefined}
+                aria-current={path === href ? "page" : undefined}
+                onClick={() => setOpen(false)}
               >
                 {label}
               </Link>
             ))}
+            {config.githubUrl ? (
+              <a
+                href={config.githubUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="github-nav"
+              >
+                GitHub <ArrowUpRight size={15} />
+              </a>
+            ) : (
+              <span className="muted small">GitHub · not configured</span>
+            )}
           </nav>
-          <WalletControl />
         </div>
       </header>
     </>
   );
 }
-export function ModeBanner() {
-  const config = usePublicConfig();
-  return config.demo ? (
-    <div className="mode-banner">
-      <strong>DEMO WORKSPACE</strong>
-      <span>Simulated market data. No A2P token has been connected.</span>
-    </div>
-  ) : !config.a2pAddress ? (
-    <div className="mode-banner prelaunch">
-      <strong>PRELAUNCH</strong>
+export function ModeBanner({ config }: { config: PublicConfig }) {
+  return (
+    <div
+      className={`mode-banner ${config.mode === "demo" ? "" : "live-banner"}`}
+    >
+      <strong>
+        {config.mode === "demo" ? "DEMO WORKSPACE" : "LIVE · READ ONLY"}
+      </strong>
       <span>
-        A2P is not configured yet. Available source data will appear
-        independently.
+        {config.mode === "demo"
+          ? "Synthetic data & example tasks. No real funding or market represented."
+          : "Only configured, verified sources. Missing data stays visible."}
+      </span>
+      <span className="banner-end">
+        {config.mode === "demo"
+          ? "PREVIEW / 01"
+          : config.networkType || "NETWORK UNCONFIGURED"}
       </span>
     </div>
-  ) : null;
+  );
 }
-export function Footer() {
+export function Footer({ symbol }: { symbol: string }) {
   return (
     <footer className="site-footer">
       <div className="footer-top">
-        <span className="brand-text">Apples to Pears</span>
-        <div>
-          <a href="https://docs.pair.trade" target="_blank" rel="noreferrer">
-            Pair docs
-          </a>
-          <a
-            href="https://docs.ponsfamily.com/v2"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Pons docs
-          </a>
-          <Link href="/api/pear-ratio">Ratio API</Link>
-        </div>
+        <Link href="/" className="brand-text">
+          PEAR · {symbol}
+          <span className="small"> A little different. Open by design.</span>
+        </Link>
+        <Link href="/api/pear-ratio">
+          Read-only ratio API <ArrowUpRight size={14} />
+        </Link>
       </div>
       <p>
         Independent community project. Not affiliated with or endorsed by Apple,
-        Robinhood, Pair.trade, or Pons. A2P does not represent Apple equity. A2P
-        and the AAPL Stock Token are separate assets. Pairing does not guarantee
-        correlated prices, backing, redemption, or value. No guaranteed yield or
-        returns.
+        Robinhood, Pair.trade or Pons. {symbol} is the project ticker, not proof
+        of an asset’s identity. The ratio is a price comparison, not backing,
+        redemption or an executable quote.
       </p>
-      <p className="small">
-        “1 Apple” means one whole AAPL Stock Token for the Pear Ratio. Stock
-        Token availability is subject to issuer restrictions. Prices are
-        reference observations, not executable quotes.
+      <p>
+        Contributions are open to everyone. No purchase or token holdings
+        required.
       </p>
     </footer>
   );

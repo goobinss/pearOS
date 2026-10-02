@@ -1,6 +1,6 @@
 # Third-party notices
 
-The small local UI primitives in `components/ui/` are adapted from [shadcn/ui](https://github.com/shadcn-ui/ui). Their upstream license follows. Other installed dependencies retain their own licenses.
+The small local UI primitives in `packages/ui/src/` are adapted from [shadcn/ui](https://github.com/shadcn-ui/ui). Their upstream license follows. Other installed dependencies retain their own licenses.
 
 MIT License
 
@@ -23,3 +23,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## Inter font
+
+The locally bundled Inter typeface is distributed via `@fontsource/inter` under the SIL Open Font License 1.1. Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter). The package includes its license; the full text is preserved in [docs/licenses/INTER-OFL.txt](docs/licenses/INTER-OFL.txt).

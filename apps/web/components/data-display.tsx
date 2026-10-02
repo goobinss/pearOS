@@ -1,44 +1,47 @@
-import { isAddress } from "viem";
-import type { Observation, Freshness, Transfer } from "@/lib/types";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-  EmptyDescription,
-} from "@pearos/ui/empty";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@pearos/ui/table";
-import { dateTime, shortAddress, amount } from "./format";
-
-export function Status({ status }: { status: Freshness }) {
+import type {
+  DataMode,
+  DataStatus,
+  Observation,
+  RatioResponse,
+} from "@/lib/types";
+import { amount, dateTime } from "./format";
+export function Status({
+  status,
+  mode,
+}: {
+  status: DataStatus;
+  mode?: DataMode;
+}) {
   return (
     <span className={`status status-${status}`}>
-      {status === "live"
+      {mode === "demo" ? "DEMO · " : ""}
+      {status === "ok"
         ? "Observed"
-        : status === "cached"
-          ? "Cached"
+        : status === "unconfigured"
+          ? "Unconfigured"
           : status === "stale"
             ? "Stale"
-            : status === "demo"
-              ? "Demo"
-              : "Unavailable"}
+            : "Unavailable"}
     </span>
   );
 }
-export function SourceNote({ value }: { value: Observation<unknown> }) {
+export function SourceNote({
+  value,
+  mode,
+}: {
+  value: Observation<unknown>;
+  mode: DataMode;
+}) {
   return (
     <div className="source-note">
-      <Status status={value.status} />
+      <Status status={value.status} mode={mode} />
+      <span>{value.source}</span>
       <span>
-        {value.source} · {dateTime(value.observedAt)}
+        Observed: {dateTime(value.observedAt)}
+        <br />
+        Fetched: {dateTime(value.fetchedAt)}
       </span>
-      {value.message && <p>{value.message}</p>}
+      {value.reason && <p>{value.reason}</p>}
     </div>
   );
 }
@@ -50,129 +53,67 @@ export function EmptyState({
   description: string;
 }) {
   return (
-    <Empty className="empty-state">
-      <EmptyHeader>
-        <EmptyTitle>{title}</EmptyTitle>
-        <EmptyDescription>{description}</EmptyDescription>
-      </EmptyHeader>
-    </Empty>
-  );
-}
-export function Metric({
-  label,
-  value,
-  detail,
-  status,
-}: {
-  label: string;
-  value: string;
-  detail?: string;
-  status?: Freshness;
-}) {
-  return (
-    <div className="metric">
-      <div className="metric-label">
-        <span>{label}</span>
-        {status && <Status status={status} />}
-      </div>
-      <strong className="metric-value">{value}</strong>
-      {detail && <p className="small muted">{detail}</p>}
+    <div className="empty-state">
+      <span className="empty-mark" aria-hidden="true">
+        ∅
+      </span>
+      <h2>{title}</h2>
+      <p>{description}</p>
     </div>
   );
 }
-export function AddressLink({
-  address,
-  explorer,
+export function RatioPanel({
+  ratio,
+  symbol,
 }: {
-  address: string | null | undefined;
-  explorer: string;
-}) {
-  return address && isAddress(address, { strict: false }) ? (
-    <a
-      className="mono address-link"
-      href={`${explorer}/address/${address}`}
-      title={address}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {shortAddress(address)}
-    </a>
-  ) : (
-    <span className="muted">
-      {address === "demo" ? "Simulated" : "Not configured"}
-    </span>
-  );
-}
-export function TransferTable({
-  observation,
-  explorer,
-}: {
-  observation: Observation<Transfer[]>;
-  explorer: string;
+  ratio: RatioResponse;
+  symbol: string;
 }) {
   return (
-    <>
-      {observation.data?.length ? (
-        <Table className="data-table">
-          <TableHeader>
-            <TableRow>
-              <TableHead>Activity</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Time</TableHead>
-              <TableHead>Transaction</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {observation.data.map((tx, index) => (
-              <TableRow key={`${tx.hash}-${index}`}>
-                <TableCell>
-                  <span className={`direction direction-${tx.direction}`}>
-                    {tx.direction === "in"
-                      ? "Received"
-                      : tx.direction === "out"
-                        ? "Sent"
-                        : tx.direction === "self"
-                          ? "Self-transfer"
-                          : "Transfer"}
-                  </span>
-                  <span className="table-subtitle">{tx.category}</span>
-                </TableCell>
-                <TableCell className="mono">
-                  {amount(tx.amount)} {tx.symbol}
-                </TableCell>
-                <TableCell>{dateTime(tx.timestamp)}</TableCell>
-                <TableCell>
-                  {/^0x[0-9a-f]{64}$/i.test(tx.hash) ? (
-                    <a
-                      className="mono"
-                      href={`${explorer}/tx/${tx.hash}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {shortAddress(tx.hash)}
-                    </a>
-                  ) : (
-                    "Example"
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+    <section className="ratio-panel" aria-label="Pear Ratio">
+      <div className="section-heading">
+        <span className="eyebrow">THE PEAR RATIO</span>
+        <Status status={ratio.status} mode={ratio.mode} />
+      </div>
+      {ratio.ratio ? (
+        <>
+          <p className="ratio-preamble">
+            One whole AAPL Stock Token, expressed in pears.
+          </p>
+          <div className="ratio-value">
+            {amount(ratio.ratio, 4)}
+            <span>{symbol} / AAPL token</span>
+          </div>
+        </>
       ) : (
-        <EmptyState
-          title={
-            observation.status === "unavailable"
-              ? "Activity is unavailable"
-              : "No transfers in this window"
-          }
-          description={
-            observation.message ||
-            "Recent, confirmed ERC-20 transfers will appear here when an A2P contract is connected."
-          }
-        />
+        <div className="ratio-coming">
+          <h2>
+            The first comparison
+            <br />
+            is coming.
+          </h2>
+          <p>{ratio.reason}</p>
+        </div>
       )}
-      <SourceNote value={observation} />
-    </>
+      <div className="ratio-formula">
+        <span>Reference token price</span>
+        <span aria-hidden="true">÷</span>
+        <span>Project token price</span>
+      </div>
+      <div className="ratio-note">
+        <span>
+          {ratio.mode === "demo"
+            ? "DEMO · synthetic illustration"
+            : "Read-only comparison"}
+        </span>
+        <time dateTime={ratio.observedAt || undefined}>
+          {dateTime(ratio.observedAt)}
+        </time>
+      </div>
+      <p className="small">
+        Whole-token units · matching quote currencies · source observations
+        within 60 seconds. No redemption or executable trade implied.
+      </p>
+    </section>
   );
 }

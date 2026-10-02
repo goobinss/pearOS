@@ -1,0 +1,39 @@
+PEAROS / COMMUNITY X (TWITTER) PROPOSAL
+Task ID: community-x
+Reward: To be confirmed by the owner before any paid work.
+Status: Planning; no assignment or permission to publish is granted.
+
+YOUR INTRODUCTION
+Name / GitHub username:
+Relevant experience (one or two sentences):
+When you are available:
+
+YOUR PLAN
+Suggested account name and bio:
+Community tone and guidelines:
+How community members can suggest posts:
+How the owner approves every post before publication:
+How access would be delegated without sharing passwords:
+
+DRAFT CONTENT
+Five example posts (drafts only):
+1.
+2.
+3.
+4.
+5.
+One-week content plan:
+
+HANDOFF
+Account setup steps, to perform only after approval:
+Review and access-removal checklist:
+Questions for the owner:
+
+HOW TO SEND THIS
+On Build Pear, choose "Open proposal on GitHub". Sign in or create a free
+account, add your introduction and plan to the draft, then submit it.
+You may attach this file or share a document link. No coding or Git
+commands are needed. Keep future updates in that same conversation.
+Wait for the owner to confirm scope, assignment and exact reward terms
+before paid work. Do not register accounts or publish as PearOS yet.
+Never include passwords, recovery codes or private account information.
